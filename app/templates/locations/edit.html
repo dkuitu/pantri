@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Edit {{ location.name }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-white py-3">
+                <h1 class="h4 mb-0">Edit Location</h1>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">Name</label>
+                        <input type="text" name="name" class="form-control" 
+                               value="{{ location.name }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea name="description" class="form-control">{{ location.description or '' }}</textarea>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-lg me-1"></i>
+                            Save Changes
+                        </button>
+                        <a href="{{ url_for('locations.index') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-lg me-1"></i>
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

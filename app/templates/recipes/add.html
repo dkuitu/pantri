@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+{% block title %}Add Recipe{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <h1 class="h3 mb-0">Add New Recipe</h1>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" id="recipeForm">
+                        <!-- Basic Info -->
+                        <div class="mb-4">
+                            <label class="form-label h6">Recipe Title</label>
+                            <input type="text" name="title" class="form-control form-control-lg" 
+                                   placeholder="e.g., Classic Spaghetti Carbonara" required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label h6">Description</label>
+                            <textarea name="description" class="form-control" rows="3" 
+                                    placeholder="A brief description of your recipe"></textarea>
+                        </div>
+
+                        <!-- Recipe Details -->
+                        <div class="row g-4 mb-4">
+                            <div class="col-md-4">
+                                <label class="form-label h6">Prep Time</label>
+                                <div class="input-group">
+                                    <input type="number" name="prep_time" class="form-control" 
+                                           min="0" placeholder="0">
+                                    <span class="input-group-text bg-light">min</span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label h6">Cook Time</label>
+                                <div class="input-group">
+                                    <input type="number" name="cook_time" class="form-control" 
+                                           min="0" placeholder="0">
+                                    <span class="input-group-text bg-light">min</span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label h6">Servings</label>
+                                <input type="number" name="servings" class="form-control" 
+                                       min="1" placeholder="4">
+                            </div>
+                        </div>
+
+                        <!-- Tags -->
+                        <div class="mb-4">
+                            <label class="form-label h6">Category</label>
+                            <select name="tags" class="form-select">
+                                <option value="">Select a category</option>
+                                {% for tag in tags %}
+                                    <option value="{{ tag.id }}">{{ tag.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Ingredients -->
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <label class="form-label h6 mb-0">Ingredients</label>
+                                <button type="button" class="btn btn-sm btn-outline-primary" 
+                                        onclick="addIngredient()">
+                                    <i class="bi bi-plus-lg"></i> Add Ingredient
+                                </button>
+                            </div>
+                            <div id="ingredients" class="border rounded-3 p-3 bg-light">
+                                <div class="ingredient-row row g-2 mb-2 align-items-center">
+                                    <div class="col-3">
+                                        <input type="number" name="ingredient_quantity[]" 
+                                               class="form-control" placeholder="Amount" min="0">
+                                    </div>
+                                    <div class="col-2">
+                                        <select name="ingredient_unit[]" class="form-select">
+                                            <option value="g">g</option>
+                                            <option value="mL">mL</option>
+                                            <option value="items">items</option>
+                                            <option value="cups">cups</option>
+                                            <option value="tbsp">tbsp</option>
+                                            <option value="tsp">tsp</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-6">
+                                        <input type="text" name="ingredient_name[]" 
+                                               class="form-control" placeholder="Ingredient name" required>
+                                    </div>
+                                    <div class="col-1">
+                                        <button type="button" class="btn btn-outline-danger btn-sm" 
+                                                onclick="removeIngredient(this)">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Instructions -->
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <label class="form-label h6 mb-0">Instructions</label>
+                                <button type="button" class="btn btn-sm btn-outline-primary" 
+                                        onclick="addInstruction()">
+                                    <i class="bi bi-plus-lg"></i> Add Step
+                                </button>
+                            </div>
+                            <div id="instructions" class="border rounded-3 p-3 bg-light">
+                                <div class="instruction-row mb-2">
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white">1</span>
+                                        <textarea name="instructions[]" class="form-control" rows="2"
+                                                placeholder="Describe this step" required></textarea>
+                                        <button type="button" class="btn btn-outline-danger" 
+                                                onclick="removeInstruction(this)">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-plus-lg me-1"></i> Add Recipe
+                            </button>
+                            <a href="{{ url_for('recipes.index') }}" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-lg me-1"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function addIngredient() {
+    const container = document.getElementById('ingredients');
+    const newRow = container.children[0].cloneNode(true);
+    newRow.querySelectorAll('input').forEach(input => input.value = '');
+    container.appendChild(newRow);
+}
+
+function removeIngredient(button) {
+    const container = document.getElementById('ingredients');
+    if (container.children.length > 1) {
+        button.closest('.ingredient-row').remove();
+    }
+}
+
+function addInstruction() {
+    const container = document.getElementById('instructions');
+    const newRow = container.children[0].cloneNode(true);
+    newRow.querySelector('textarea').value = '';
+    newRow.querySelector('.input-group-text').textContent = container.children.length + 1;
+    container.appendChild(newRow);
+}
+
+function removeInstruction(button) {
+    const container = document.getElementById('instructions');
+    if (container.children.length > 1) {
+        button.closest('.instruction-row').remove();
+        // Renumber remaining steps
+        container.querySelectorAll('.input-group-text').forEach((span, index) => {
+            span.textContent = index + 1;
+        });
+    }
+}
+</script>
+{% endblock %} 

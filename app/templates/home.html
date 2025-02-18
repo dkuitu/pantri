@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- At a Glance Box -->
+    <div class="bg-white p-4 rounded-lg shadow">
+        <div class="flex items-center justify-between">
+            <div>
+                <h2 class="text-lg font-semibold">At a Glance</h2>
+                {% if expiring_soon %}
+                    <p class="text-orange-500 mt-2">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                        {{ expiring_soon|length }} items expiring soon!
+                    </p>
+                {% else %}
+                    <p class="text-gray-600 mt-2">No items expiring soon</p>
+                {% endif %}
+            </div>
+            <a href="{{ url_for('pantry.index') }}" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
+                View Pantry
+            </a>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="grid grid-cols-2 gap-4">
+        <a href="{{ url_for('pantry.add') }}" 
+           class="bg-green-500 text-white p-4 rounded-lg text-center hover:bg-green-600">
+            <i class="fas fa-plus mr-2"></i>
+            Add Item
+        </a>
+        <a href="{{ url_for('shopping.index') }}" 
+           class="bg-purple-500 text-white p-4 rounded-lg text-center hover:bg-purple-600">
+            <i class="fas fa-shopping-cart mr-2"></i>
+            Shopping List
+        </a>
+    </div>
+</div>
+{% endblock %}

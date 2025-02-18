@@ -1,19 +1,19 @@
 {% extends "base.html" %}
-{% block title %}Add Pantry Item{% endblock %}
+{% block title %}Edit {{ item.name }}{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-6">
         <div class="card">
             <div class="card-header bg-white py-3">
-                <h1 class="h4 mb-0">Add New Item</h1>
+                <h1 class="h4 mb-0">Edit Item</h1>
             </div>
             <div class="card-body">
                 <form method="POST">
                     <div class="mb-3">
                         <label class="form-label">Name</label>
                         <input type="text" name="name" class="form-control" 
-                               placeholder="e.g., Canned Beans, Honey, Pasta" required>
+                               value="{{ item.name }}" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Amount</label>
@@ -22,15 +22,14 @@
                                    name="quantity" 
                                    class="form-control" 
                                    min="0"
-                                   placeholder="e.g., 1, 2, 500" 
+                                   value="{{ item.quantity }}"
                                    required>
                             <select name="unit" class="form-select" style="max-width: 140px;">
-                                <option value="items">items</option>
-                                <option value="cans">cans</option>
-                                <option value="boxes">boxes</option>
-                                <option value="bags">bags</option>
-                                <option value="g">g</option>
-                                <option value="mL">mL</option>
+                                {% for unit in ['items', 'cans', 'boxes', 'bags', 'g', 'mL'] %}
+                                    <option value="{{ unit }}" {% if unit == item.unit %}selected{% endif %}>
+                                        {{ unit }}
+                                    </option>
+                                {% endfor %}
                             </select>
                         </div>
                     </div>
@@ -38,18 +37,24 @@
                         <label class="form-label">Location</label>
                         <select name="location_id" class="form-select" required>
                             {% for location in locations %}
-                                <option value="{{ location.id }}">{{ location.name }}</option>
+                                <option value="{{ location.id }}" 
+                                        {% if location.id == item.location_id %}selected{% endif %}>
+                                    {{ location.name }}
+                                </option>
                             {% endfor %}
                         </select>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Expiry Date</label>
                         <div class="input-group">
-                            <input type="date" name="expiry_date" class="form-control">
+                            <input type="date" name="expiry_date" class="form-control"
+                                   value="{{ item.expiry_date.strftime('%Y-%m-%d') if item.expiry_date }}"
+                                   {% if not item.expiry_date %}disabled{% endif %}>
                             <div class="input-group-text">
                                 <div class="form-check form-check-inline m-0">
                                     <input class="form-check-input" type="checkbox" name="no_expiry" 
-                                           id="noExpiry" onchange="toggleExpiryDate(this)">
+                                           id="noExpiry" onchange="toggleExpiryDate(this)"
+                                           {% if not item.expiry_date %}checked{% endif %}>
                                     <label class="form-check-label" for="noExpiry">No expiry</label>
                                 </div>
                             </div>
@@ -57,8 +62,8 @@
                     </div>
                     <div class="d-grid gap-2">
                         <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-plus-lg me-1"></i>
-                            Add Item
+                            <i class="bi bi-check-lg me-1"></i>
+                            Save Changes
                         </button>
                         <a href="{{ url_for('pantry.index') }}" class="btn btn-outline-secondary">
                             <i class="bi bi-x-lg me-1"></i>
@@ -80,4 +85,4 @@ function toggleExpiryDate(checkbox) {
     }
 }
 </script>
-{% endblock %}
+{% endblock %} 
